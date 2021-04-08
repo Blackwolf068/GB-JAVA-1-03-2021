@@ -190,8 +190,6 @@ public class GameXO {
                         showEndGameDialog(in);
                         break;
                     }
-                    // TODO: 06.04.2021 обработать случай ничьей
-                    // DONE
                     if (fullMap()) {
                         printMap();
                         System.out.println("Увы, ничья");
