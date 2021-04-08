@@ -33,7 +33,6 @@ public class HomeWorkApp {
             }
         }
     }
-
     public static void compareNumbers() {
         int a = 12;
         int b = 12;
