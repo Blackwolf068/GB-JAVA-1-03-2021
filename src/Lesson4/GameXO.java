@@ -48,9 +48,8 @@ public class GameXO {
         MAP[x - 1][y - 1] = value;
     }
 
-    private static void moveAI() {
-        // TODO: 06.04.2021 логика хода компьютера (интересная)
-        // DONE
+    private static void moveAIRandom() {
+        // случайный ход компьютера
         int rnd, x, y;
         while (true) {
             rnd = (int) (Math.random() * SIZE * SIZE);
@@ -58,10 +57,62 @@ public class GameXO {
             y = rnd % SIZE + 1;
             if (isCellValid(x, y)) {
                 System.out.printf("Компьютер сделал ход: %d, %d \n", x, y);
-                MAP[x - 1][y - 1] = DOT_O;
+                makeStep(x, y, DOT_O);
                 return;
             }
         }
+    }
+
+
+    private static void moveAI() {
+        // ход компьютера с анализом блокировки игрока
+        int cnt;
+        for (int i = 0; i < SIZE; i++) {
+            cnt = 0;
+            for (int j = 0; j < SIZE; j++) {
+                if (MAP[i][j] == DOT_X) cnt ++;
+            }
+            if (cnt == 2) for (int j = 0; j < SIZE; j++) {
+                if (isCellValid(i + 1, j + 1)) {
+                    makeStep(i + 1, j + 1, DOT_O);
+                    System.out.printf("Компьютер сделал ход: %d, %d \n", i + 1, j + 1);
+                    return;
+                }
+            }
+        }
+        for (int i = 0; i < SIZE; i++) {
+            cnt = 0;
+            for (int j = 0; j < SIZE; j++) {
+                if (MAP[j][i] == DOT_X) cnt ++;
+            }
+            if (cnt == 2) for (int j = 0; j < SIZE; j++) {
+                if (isCellValid(j + 1, i + 1)) {
+                    makeStep(j + 1, i + 1, DOT_O);
+                    System.out.printf("Компьютер сделал ход: %d, %d \n", j + 1, i + 1);
+                    return;
+                }
+            }
+        }
+        cnt = 0;
+        for (int i = 0; i < SIZE; i++) if (MAP[i][i] == DOT_X) cnt ++;
+        if (cnt == 2) for (int i = 0; i < SIZE; i++) {
+            if (isCellValid( i + 1, i + 1)) {
+                makeStep(i + 1, i + 1, DOT_O);
+                System.out.printf("Компьютер сделал ход: %d, %d \n", i + 1, i + 1);
+                return;
+            }
+        }
+        cnt = 0;
+        for (int i = 0; i < SIZE; i++) if (MAP[i][SIZE - i - 1] == DOT_X) cnt ++;
+        if (cnt == 2) for (int i = 0; i < SIZE; i++) {
+            if (isCellValid( i + 1, SIZE - i)) {
+                makeStep(i +1, SIZE - 1, DOT_O);
+                System.out.printf("Компьютер сделал ход: %d, %d \n", i + 1, SIZE - i);
+                return;
+            }
+        }
+        moveAIRandom();
+        return;
     }
 
     private static void aiAwait() {
@@ -77,8 +128,10 @@ public class GameXO {
     }
 
     private static boolean isWin(char symb) {
-        // TODO: 06.04.2021 логика проверки на победу
-        // DONE
+        // анализ победы
+        // при добавлении параметра количества символов подряд
+        // надо будет ставить счётчик повторений, анализировать его по строкам
+        // и усложнять циклы по проверке диагоналей.
         boolean flagWin;
         // проверка по строкам
         for (int i = 0; i < SIZE; i++) {
